@@ -10,6 +10,7 @@ import 'native_ad_widget.dart';
 
 class DirectMessageScreen extends StatefulWidget {
   final String? initialMessage;
+
   const DirectMessageScreen({this.initialMessage, Key? key}) : super(key: key);
 
   @override
@@ -360,6 +361,9 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
                       ),
               ),
             ),
+            Container(
+                margin: EdgeInsets.symmetric(horizontal: 10),
+                child: NativeAdWidget()),
           ],
         ),
       ),

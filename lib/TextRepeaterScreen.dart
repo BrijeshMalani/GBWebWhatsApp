@@ -322,7 +322,9 @@ class _TextRepeaterScreenState extends State<TextRepeaterScreen> {
                 ),
               ),
             ],
-            NativeAdWidget(),
+            Container(
+                margin: EdgeInsets.symmetric(horizontal: 10),
+                child: NativeAdWidget()),
           ],
         ),
       ),

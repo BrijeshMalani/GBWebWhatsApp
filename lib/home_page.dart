@@ -118,6 +118,7 @@ class _HomePageState extends State<HomePage> {
                       child: _HomeButton(
                         imagePath: 'assets/images/web.png',
                         label: "Whats Web",
+                        padding: EdgeInsets.symmetric(vertical: 40),
                         onTap: () {
                           Common.interstitial_ad_id.isEmpty
                               ? Navigator.push(
@@ -142,6 +143,7 @@ class _HomePageState extends State<HomePage> {
                       child: _HomeButton(
                         icon: Icons.message,
                         label: "Direct Message",
+                        padding: EdgeInsets.symmetric(vertical: 40),
                         onTap: () {
                           Common.interstitial_ad_id.isEmpty
                               ? Navigator.push(
@@ -169,7 +171,7 @@ class _HomePageState extends State<HomePage> {
                   margin: EdgeInsets.symmetric(horizontal: 10),
                   child: NativeAdWidget()),
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
                 child: GridView.count(
                   crossAxisCount: 2,
                   mainAxisSpacing: 16,
@@ -288,6 +290,30 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                     _HomeButton(
+                      icon: Icons.list,
+                      label: 'Common Phrases',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CommonPhrasesScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _HomeButton(
+                      icon: Icons.font_download,
+                      label: 'Fancy Fonts',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FancyFontsScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _HomeButton(
                       icon: Icons.settings,
                       label: "Settings",
                       onTap: () {
@@ -306,30 +332,6 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 );
                               });
-                      },
-                    ),
-                    _HomeButton(
-                      icon: Icons.font_download,
-                      label: 'Fancy Fonts',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FancyFontsScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                    _HomeButton(
-                      icon: Icons.list,
-                      label: 'Common Phrases',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CommonPhrasesScreen(),
-                          ),
-                        );
                       },
                     ),
                   ],
