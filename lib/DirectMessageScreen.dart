@@ -4,10 +4,14 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'Utils/app_theme.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'native_ad_widget.dart';
 
 class DirectMessageScreen extends StatefulWidget {
+  final String? initialMessage;
+  const DirectMessageScreen({this.initialMessage, Key? key}) : super(key: key);
+
   @override
   _DirectMessageScreenState createState() => _DirectMessageScreenState();
 }
@@ -26,6 +30,25 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
     'Are you available for a quick chat?',
     'Let\'s catch up soon!',
   ];
+
+  List<String> _commonPhrases = [];
+  final String _prefsKey = 'common_phrases_list';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCommonPhrases();
+    if (widget.initialMessage != null && widget.initialMessage!.isNotEmpty) {
+      _messageController.text = widget.initialMessage!;
+    }
+  }
+
+  Future<void> _loadCommonPhrases() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _commonPhrases = prefs.getStringList(_prefsKey) ?? [];
+    });
+  }
 
   @override
   void dispose() {
@@ -80,6 +103,76 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
           borderRadius: BorderRadius.circular(10),
         ),
       ),
+    );
+  }
+
+  void _showCommonPhrasesDialog() async {
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Container(
+            padding: EdgeInsets.all(16),
+            constraints: BoxConstraints(maxHeight: 400, minWidth: 300),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Common Phrases',
+                  style: GoogleFonts.poppins(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.primaryColor,
+                  ),
+                ),
+                SizedBox(height: 16),
+                Expanded(
+                  child: _commonPhrases.isEmpty
+                      ? Center(
+                          child: Text(
+                            'No common phrases found.',
+                            style: GoogleFonts.poppins(
+                                fontSize: 14, color: Colors.grey),
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: _commonPhrases.length,
+                          itemBuilder: (context, index) {
+                            return Card(
+                              margin: EdgeInsets.only(bottom: 8),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 2,
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(12),
+                                onTap: () {
+                                  setState(() {
+                                    _messageController.text =
+                                        _commonPhrases[index];
+                                    _selectedMessage = '';
+                                  });
+                                  Navigator.pop(context);
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.all(16),
+                                  child: Text(
+                                    _commonPhrases[index],
+                                    style: GoogleFonts.poppins(fontSize: 14),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -175,43 +268,63 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
             SizedBox(height: 24),
             _buildSection(
               title: 'Write Your Message',
-              child: TextField(
-                controller: _messageController,
-                maxLines: 4,
-                style: TextStyle(color: theme.textTheme.bodyLarge?.color),
-                decoration: InputDecoration(
-                  hintText: 'Type your message here...',
-                  alignLabelWithHint: true,
-                  hintStyle: TextStyle(color: theme.hintColor),
-                  filled: true,
-                  fillColor: isDarkMode ? Colors.grey[800] : Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                        color: AppTheme.primaryColor.withOpacity(0.2)),
+              child: Column(
+                children: [
+                  TextField(
+                    controller: _messageController,
+                    maxLines: 4,
+                    style: TextStyle(color: theme.textTheme.bodyLarge?.color),
+                    decoration: InputDecoration(
+                      hintText: 'Type your message here...',
+                      alignLabelWithHint: true,
+                      hintStyle: TextStyle(color: theme.hintColor),
+                      filled: true,
+                      fillColor: isDarkMode ? Colors.grey[800] : Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                            color: AppTheme.primaryColor.withOpacity(0.2)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                            color: AppTheme.primaryColor.withOpacity(0.2)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: AppTheme.primaryColor),
+                      ),
+                    ),
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                        color: AppTheme.primaryColor.withOpacity(0.2)),
+                  SizedBox(height: 8),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        elevation: 0,
+                      ),
+                      icon: Icon(Icons.list, color: Colors.white, size: 20),
+                      label: Text(
+                        'Common Phrases',
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      onPressed: _showCommonPhrasesDialog,
+                    ),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: AppTheme.primaryColor),
-                  ),
-                ),
+                ],
               ),
             ),
             SizedBox(height: 24),
-            _buildSection(
-              title: 'Or Choose a Predefined Message',
-              child: Column(
-                children: _predefinedMessages.map((message) {
-                  return _buildMessageCard(message);
-                }).toList(),
-              ),
-            ),
-            SizedBox(height: 32),
             Center(
               child: ElevatedButton(
                 onPressed: _isLoading ? null : _sendMessage,

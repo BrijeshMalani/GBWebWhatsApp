@@ -14,6 +14,8 @@ import 'chat_background_screen.dart';
 import 'native_ad_widget.dart';
 import 'whatscaption_screen.dart';
 import 'whatscroping_screen.dart';
+import 'CommonPhrasesScreen.dart';
+import 'FancyFontsScreen.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -304,6 +306,30 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 );
                               });
+                      },
+                    ),
+                    _HomeButton(
+                      icon: Icons.font_download,
+                      label: 'Fancy Fonts',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FancyFontsScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _HomeButton(
+                      icon: Icons.list,
+                      label: 'Common Phrases',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CommonPhrasesScreen(),
+                          ),
+                        );
                       },
                     ),
                   ],
