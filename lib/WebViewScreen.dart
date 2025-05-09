@@ -47,9 +47,11 @@ class _WebViewScreenState extends State<WebViewScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        leading: Icon(Icons.arrow_back, color: Colors.white),
         actions: [
           IconButton(
             icon: Icon(Icons.refresh),
+            color: Colors.white,
             onPressed: () {
               _controller.reload();
             },

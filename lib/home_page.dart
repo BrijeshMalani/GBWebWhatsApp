@@ -95,7 +95,7 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           backgroundColor: AppTheme.primaryColor,
           elevation: 0,
-          leading: Icon(Icons.arrow_back, color: Colors.white),
+          // leading: Icon(Icons.arrow_back, color: Colors.white),
           title: Text(
             "GB Web Latest Version",
             style: GoogleFonts.poppins(

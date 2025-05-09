@@ -78,7 +78,11 @@ class _WebShowScreenState extends State<WebShowScreen> {
       appBar: AppBar(
         backgroundColor: AppTheme.primaryColor,
         elevation: 0,
-        leading: Icon(Icons.arrow_back, color: Colors.white),
+        leading: InkWell(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Icon(Icons.arrow_back, color: Colors.white)),
         title: Text("Whats Web"),
       ),
       body: SizedBox(

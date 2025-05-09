@@ -85,6 +85,8 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppTheme.primaryColor,
@@ -104,36 +106,36 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
               title: 'Enter Phone Number',
               child: Row(
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: InkWell(
-                      onTap: () {
-                        showCountryPicker(
-                          context: context,
-                          showPhoneCode: true,
-                          onSelect: (Country country) {
-                            setState(() {
-                              _selectedCountryCode = '+${country.phoneCode}';
-                            });
-                          },
-                        );
-                      },
-                      child: Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              _selectedCountryCode,
-                              style: TextStyle(fontSize: 16),
-                            ),
-                            Icon(Icons.arrow_drop_down),
-                          ],
-                        ),
+                  InkWell(
+                    onTap: () {
+                      showCountryPicker(
+                        context: context,
+                        showPhoneCode: true,
+                        onSelect: (Country country) {
+                          setState(() {
+                            _selectedCountryCode = '+${country.phoneCode}';
+                          });
+                        },
+                      );
+                    },
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                      decoration: BoxDecoration(
+                        color: isDarkMode ? Colors.grey[800] : Colors.white,
+                        border: Border.all(
+                            color: AppTheme.primaryColor.withOpacity(0.2)),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            _selectedCountryCode,
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          Icon(Icons.arrow_drop_down),
+                        ],
                       ),
                     ),
                   ),
@@ -142,10 +144,28 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
                     child: TextField(
                       controller: _numberController,
                       keyboardType: TextInputType.phone,
+                      style: TextStyle(color: theme.textTheme.bodyLarge?.color),
                       decoration: InputDecoration(
                         hintText: 'Enter phone number',
+                        hintStyle: TextStyle(color: theme.hintColor),
                         prefixIcon:
                             Icon(Icons.phone, color: AppTheme.primaryColor),
+                        filled: true,
+                        fillColor: isDarkMode ? Colors.grey[800] : Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                              color: AppTheme.primaryColor.withOpacity(0.2)),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                              color: AppTheme.primaryColor.withOpacity(0.2)),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: AppTheme.primaryColor),
+                        ),
                       ),
                     ),
                   ),
@@ -158,9 +178,27 @@ class _DirectMessageScreenState extends State<DirectMessageScreen> {
               child: TextField(
                 controller: _messageController,
                 maxLines: 4,
+                style: TextStyle(color: theme.textTheme.bodyLarge?.color),
                 decoration: InputDecoration(
                   hintText: 'Type your message here...',
                   alignLabelWithHint: true,
+                  hintStyle: TextStyle(color: theme.hintColor),
+                  filled: true,
+                  fillColor: isDarkMode ? Colors.grey[800] : Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                        color: AppTheme.primaryColor.withOpacity(0.2)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                        color: AppTheme.primaryColor.withOpacity(0.2)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: AppTheme.primaryColor),
+                  ),
                 ),
               ),
             ),

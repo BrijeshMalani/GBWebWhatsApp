@@ -19,14 +19,23 @@ class _WhatscropingScreenState extends State<WhatscropingScreen> {
   File? _croppedImageFile;
   final ImagePicker _picker = ImagePicker();
 
-  Future<void> _requestPermissions() async {
-    Map<Permission, PermissionStatus> statuses = await [
-      Permission.storage,
-      Permission.photos,
-    ].request();
-
-    if (statuses[Permission.storage]!.isDenied ||
-        statuses[Permission.photos]!.isDenied) {}
+  Future<bool> _requestPermissions() async {
+    if (Platform.isIOS) {
+      // For iOS, we only need photos permission
+      var status = await Permission.photos.request();
+      if (!status.isGranted) {
+        _showSnackBar('Photo library permission is required', isSuccess: false);
+        return false;
+      }
+    } else {
+      // For Android, we need storage permission
+      var status = await Permission.storage.request();
+      if (!status.isGranted) {
+        _showSnackBar('Storage permission is required', isSuccess: false);
+        return false;
+      }
+    }
+    return true;
   }
 
   Future<void> _selectAndCropImage() async {
@@ -86,16 +95,18 @@ class _WhatscropingScreenState extends State<WhatscropingScreen> {
     }
 
     try {
-      await _requestPermissions();
+      bool hasPermission = await _requestPermissions();
+      if (!hasPermission) return;
 
       final bytes = await _croppedImageFile!.readAsBytes();
+
       final result = await ImageGallerySaver.saveImage(
         bytes,
         quality: 100,
         name: "cropped_${DateTime.now().millisecondsSinceEpoch}.jpg",
       );
 
-      if (result['isSuccess']) {
+      if (result['isSuccess'] == true) {
         _showSnackBar('Image saved successfully to gallery!', isSuccess: true);
       } else {
         _showSnackBar('Failed to save image', isSuccess: false);

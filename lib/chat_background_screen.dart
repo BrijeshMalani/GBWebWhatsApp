@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -63,34 +64,52 @@ class _ChatBackgroundScreenState extends State<ChatBackgroundScreen> {
 
   Future<void> downloadAssetImage(
       String assetPath, BuildContext context) async {
-    var status = await Permission.storage.request();
-    if (status.isGranted) {
-      try {
-        // Load image bytes from assets
-        ByteData byteData = await rootBundle.load(assetPath);
-        Uint8List bytes = byteData.buffer.asUint8List();
-
-        // Save to gallery
-        final result = await ImageGallerySaver.saveImage(
-          bytes,
-          quality: 100,
-          name: "chat_background_${DateTime.now().millisecondsSinceEpoch}",
-        );
-
-        if (result['isSuccess']) {
+    try {
+      if (Platform.isIOS) {
+        // Request photo library permission for iOS
+        var status = await Permission.photos.request();
+        if (!status.isGranted) {
           if (mounted) {
-            _showSnackBar('Image saved to gallery!', isSuccess: true);
+            _showSnackBar('Photo library permission is required to save images',
+                isSuccess: false);
           }
+          return;
         }
-      } catch (e) {
-        if (mounted) {
-          _showSnackBar('Failed to save image: $e', isSuccess: false);
+      } else {
+        // Request storage permission for Android
+        var status = await Permission.storage.request();
+        if (!status.isGranted) {
+          if (mounted) {
+            _showSnackBar('Storage permission is required to save images',
+                isSuccess: false);
+          }
+          return;
         }
       }
-    } else {
+
+      // Load image bytes from assets
+      ByteData byteData = await rootBundle.load(assetPath);
+      Uint8List bytes = byteData.buffer.asUint8List();
+
+      // Save to gallery
+      final result = await ImageGallerySaver.saveImage(
+        bytes,
+        quality: 100,
+        name: "chat_background_${DateTime.now().millisecondsSinceEpoch}",
+      );
+
+      if (result['isSuccess']) {
+        if (mounted) {
+          _showSnackBar('Image saved to gallery!', isSuccess: true);
+        }
+      } else {
+        if (mounted) {
+          _showSnackBar('Failed to save image', isSuccess: false);
+        }
+      }
+    } catch (e) {
       if (mounted) {
-        _showSnackBar('Storage permission is required to save images',
-            isSuccess: false);
+        _showSnackBar('Failed to save image: $e', isSuccess: false);
       }
     }
   }
