@@ -45,8 +45,13 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-3940256099942544~3347511713</string>
+
+	<key>NSUserTrackingUsageDescription</key>
+    <string>This app uses tracking to show personalized ads.</string>
+
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>This app needs access to photo library to save chat backgrounds</string>
 	<key>NSPhotoLibraryUsageDescription</key>
