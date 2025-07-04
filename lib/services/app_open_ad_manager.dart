@@ -4,6 +4,7 @@ import 'dart:async';
 import '../Utils/common.dart';
 
 class AppOpenAdManager {
+  static bool disableAds = false;
   AppOpenAd? _appOpenAd;
   bool _isShowingAd = false;
   bool _isLoadingAd = false;
@@ -22,6 +23,10 @@ class AppOpenAdManager {
 
   /// Load an AppOpenAd.
   Future<void> loadAd() async {
+    if (disableAds) {
+      print('App open ads are disabled (No Ads purchased)');
+      return;
+    }
     if (_isLoadingAd || _isShowingAd) {
       print('Skip loading ad: already loading or showing');
       return;
@@ -104,6 +109,10 @@ class AppOpenAdManager {
 
   /// Shows the ad, if one exists and is not already being shown.
   Future<void> showAdIfAvailable() async {
+    if (disableAds) {
+      print('App open ads are disabled (No Ads purchased)');
+      return;
+    }
     if (Common.app_open_ad_id.isEmpty) {
       print('App open ad ID is empty, cannot show ad');
       return;

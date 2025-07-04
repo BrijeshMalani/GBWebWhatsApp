@@ -9,11 +9,24 @@ import 'package:provider/provider.dart';
 import 'home_page.dart';
 import 'Utils/app_theme.dart';
 import 'Utils/theme_provider.dart' as theme_provider;
+import 'package:shared_preferences/shared_preferences.dart';
 
 final appOpenAdManager = AppOpenAdManager();
 
+Future<void> updateNoAdsState() async {
+  final prefs = await SharedPreferences.getInstance();
+  final noAds = prefs.getBool('no_ads_purchased') ?? false;
+  AppOpenAdManager.disableAds = noAds;
+  if (noAds) {
+    appOpenAdManager.dispose();
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Check purchase state before anything else
+  await updateNoAdsState();
 
   final data = await ApiService.fetchAppData();
   print('API Response: $data');

@@ -16,6 +16,10 @@ import 'whatscaption_screen.dart';
 import 'whatscroping_screen.dart';
 import 'CommonPhrasesScreen.dart';
 import 'FancyFontsScreen.dart';
+import 'services/api_service.dart';
+import 'no_ads_screen.dart';
+import 'services/app_open_ad_manager.dart';
+import '../main.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -25,15 +29,29 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   BannerAd? _bannerAd;
   InterstitialAd? _interstitialAd;
+  bool _noAds = false;
 
   @override
   void initState() {
     super.initState();
-    _loadBannerAd();
-    _loadInterstitialAd();
+    _initNoAds();
+    PurchaseService().init();
+  }
+
+  Future<void> _initNoAds() async {
+    final purchased = await PurchaseService().isNoAdsPurchased();
+    setState(() {
+      _noAds = purchased;
+    });
+    AppOpenAdManager.disableAds = purchased;
+    if (!purchased) {
+      _loadBannerAd();
+      _loadInterstitialAd();
+    }
   }
 
   void _loadBannerAd() {
+    if (_noAds) return;
     _bannerAd = BannerAd(
       adUnitId: Common.bannar_ad_id,
       // Android test banner ad unit ID
@@ -49,6 +67,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _loadInterstitialAd() {
+    if (_noAds) return;
     InterstitialAd.load(
       adUnitId: Common.interstitial_ad_id,
       // Android test interstitial ad unit ID
@@ -61,6 +80,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showInterstitialAd(VoidCallback onAdClosed) {
+    if (_noAds) {
+      onAdClosed();
+      return;
+    }
     if (_interstitialAd != null) {
       _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
         onAdDismissedFullScreenContent: (ad) {
@@ -167,9 +190,10 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
-              Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10),
-                  child: NativeAdWidget()),
+              if (!_noAds)
+                Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10),
+                    child: NativeAdWidget()),
               Padding(
                 padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
                 child: GridView.count(
@@ -334,6 +358,17 @@ class _HomePageState extends State<HomePage> {
                               });
                       },
                     ),
+                    _HomeButton(
+                      icon: Icons.workspace_premium,
+                      label: 'No Ads',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => NoAdsScreen()),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -342,6 +377,30 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  Future<void> _buyNoAds(BuildContext context) async {
+    try {
+      await PurchaseService().buyNoAds();
+      Navigator.pop(context); // Close the sheet
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text('Thank you for your purchase! Ads are now removed.')),
+      );
+      setState(() {
+        _noAds = true;
+        _bannerAd?.dispose();
+        _interstitialAd?.dispose();
+        _bannerAd = null;
+        _interstitialAd = null;
+      });
+      AppOpenAdManager.disableAds = true;
+      await updateNoAdsState();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Purchase failed: \\${e.toString()}')),
+      );
+    }
   }
 }
 
@@ -414,6 +473,64 @@ class _HomeButton extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _NoAdsPurchaseSheet extends StatelessWidget {
+  final VoidCallback onBuy;
+  const _NoAdsPurchaseSheet({required this.onBuy});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.workspace_premium, size: 48, color: Colors.amber),
+          SizedBox(height: 16),
+          Text(
+            'Remove All Ads',
+            style: GoogleFonts.poppins(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 8),
+          Text(
+            'Enjoy an ad-free experience forever!\nOne-time payment, no subscription.',
+            style: GoogleFonts.poppins(fontSize: 16),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 24),
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.amber.shade700,
+              foregroundColor: Colors.white,
+              minimumSize: Size(double.infinity, 48),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              textStyle: GoogleFonts.poppins(
+                  fontWeight: FontWeight.bold, fontSize: 18),
+              elevation: 2,
+            ),
+            icon: Icon(Icons.lock_open),
+            label: Text('Buy for \$1.99'),
+            onPressed: onBuy,
+          ),
+          SizedBox(height: 12),
+          Text(
+            'Secure payment via Google Play / App Store',
+            style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey),
+          ),
+        ],
       ),
     );
   }

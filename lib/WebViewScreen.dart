@@ -47,7 +47,10 @@ class _WebViewScreenState extends State<WebViewScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        leading: Icon(Icons.arrow_back, color: Colors.white),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.refresh),
