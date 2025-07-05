@@ -92,6 +92,10 @@ class _NoAdsScreenState extends State<NoAdsScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: [
           TextButton(
             onPressed: _restore,
@@ -115,110 +119,129 @@ class _NoAdsScreenState extends State<NoAdsScreen> {
             ),
           ),
           SafeArea(
-            child: Center(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Column(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SizedBox(height: 20),
+                  Text('Go Premium',
+                      style: GoogleFonts.poppins(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white)),
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SizedBox(height: 24),
-                      Text('Go Premium',
-                          style: GoogleFonts.poppins(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white)),
-                      SizedBox(height: 4),
+                      Transform(
+                        alignment: Alignment.center,
+                        transform: Matrix4.identity()..scale(-1.0, 1.0),
+                        child: Transform.rotate(
+                          angle: 90 * 3.1415926535 / 180,
+                          child: Image.asset(
+                            'assets/images/inapp_design.png',
+                            fit: BoxFit.cover,
+                            height: 50,
+                            width: 50,
+                          ),
+                        ),
+                      ),
                       Text('Unlock Everything',
                           style: GoogleFonts.poppins(
                               fontSize: 22,
                               fontWeight: FontWeight.w500,
                               color: Colors.white)),
-                      SizedBox(height: 24),
-                      _FeatureList(),
-                      SizedBox(height: 32),
-                      _PlanSelector(
-                        selected: _selectedPlan,
-                        onSelect: (i) => setState(() => _selectedPlan = i),
-                      ),
-                      SizedBox(height: 16),
-                      if (_loading)
-                        CircularProgressIndicator(color: Colors.white)
-                      else if (_purchased)
-                        Column(
-                          children: [
-                            Icon(Icons.check_circle,
-                                color: Colors.green, size: 36),
-                            SizedBox(height: 8),
-                            Text('You are Premium!',
-                                style: GoogleFonts.poppins(
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.green)),
-                          ],
-                        )
-                      else
-                        Column(
-                          children: [
-                            Text('Auto-renews. Cancel Anytime!',
-                                style: GoogleFonts.poppins(
-                                    fontSize: 14, color: Colors.green)),
-                            SizedBox(height: 10),
-                            SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppTheme.primaryColor,
-                                  foregroundColor: Colors.white,
-                                  padding: EdgeInsets.symmetric(vertical: 18),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(32),
-                                  ),
-                                  textStyle: GoogleFonts.poppins(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20),
-                                ),
-                                onPressed: _buy,
-                                child: Text('SUBSCRIBE'),
-                              ),
-                            ),
-                          ],
-                        ),
-                      if (_error != null) ...[
-                        SizedBox(height: 16),
-                        Text(_error!, style: TextStyle(color: Colors.red)),
-                      ],
-                      SizedBox(height: 18),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text.rich(
-                          TextSpan(
-                            text: 'Continuing indicates that you agree to our ',
-                            style: GoogleFonts.poppins(
-                                fontSize: 12, color: Colors.white70),
-                            children: [
-                              TextSpan(
-                                text: 'Service Policy',
-                                style: TextStyle(
-                                    decoration: TextDecoration.underline,
-                                    color: Colors.white),
-                              ),
-                              TextSpan(text: ' and '),
-                              TextSpan(
-                                text: 'Privacy Policy',
-                                style: TextStyle(
-                                    decoration: TextDecoration.underline,
-                                    color: Colors.white),
-                              ),
-                            ],
-                          ),
-                          textAlign: TextAlign.center,
+                      Transform.rotate(
+                        angle: 90 * 3.1415926535 / 180, // 90 degrees in radians
+                        child: Image.asset(
+                          'assets/images/inapp_design.png',
+                          fit: BoxFit.cover,
+                          height: 50,
+                          width: 50,
                         ),
                       ),
-                      SizedBox(height: 18),
                     ],
                   ),
-                ),
+                  SizedBox(height: 20),
+                  _FeatureList(),
+                  SizedBox(height: 30),
+                  _PlanSelector(
+                    selected: _selectedPlan,
+                    onSelect: (i) => setState(() => _selectedPlan = i),
+                  ),
+                  SizedBox(height: 16),
+                  if (_loading)
+                    CircularProgressIndicator(color: Colors.white)
+                  else if (_purchased)
+                    Column(
+                      children: [
+                        Icon(Icons.check_circle, color: Colors.green, size: 36),
+                        SizedBox(height: 8),
+                        Text('You are Premium!',
+                            style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.green)),
+                      ],
+                    )
+                  else
+                    Column(
+                      children: [
+                        Text('Auto-renews. Cancel Anytime!',
+                            style: GoogleFonts.poppins(
+                                fontSize: 14, color: Colors.green)),
+                        SizedBox(height: 10),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppTheme.primaryColor,
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(32),
+                              ),
+                              textStyle: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            onPressed: _buy,
+                            child: Text('CONTINUE'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  if (_error != null) ...[
+                    SizedBox(height: 16),
+                    Text(_error!, style: TextStyle(color: Colors.red)),
+                  ],
+                  SizedBox(height: 18),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Text.rich(
+                      TextSpan(
+                        text: 'Continuing indicates that you agree to our ',
+                        style: GoogleFonts.poppins(
+                            fontSize: 12, color: Colors.white70),
+                        children: [
+                          TextSpan(
+                            text: 'Service Policy',
+                            style: TextStyle(
+                                decoration: TextDecoration.underline,
+                                color: Colors.white),
+                          ),
+                          TextSpan(text: ' and '),
+                          TextSpan(
+                            text: 'Privacy Policy',
+                            style: TextStyle(
+                                decoration: TextDecoration.underline,
+                                color: Colors.white),
+                          ),
+                        ],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  SizedBox(height: 18),
+                ],
               ),
             ),
           ),
@@ -233,10 +256,12 @@ class _FeatureList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _FeatureRow('Infinite sticker pack'),
-        _FeatureRow('Number of 30 stickers'),
+        _FeatureRow('No Ads'),
+        _FeatureRow('No limit on whatsapp web'),
+        _FeatureRow('No limit on direct message'),
         _FeatureRow('Unlimited number of commonly used words'),
         _FeatureRow('Unrestricted font selection'),
+        _FeatureRow('Get all access'),
       ],
     );
   }
@@ -248,14 +273,14 @@ class _FeatureRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      padding: const EdgeInsets.symmetric(vertical: 1),
       child: Row(
         children: [
-          Icon(Icons.check_circle, color: AppTheme.primaryColor, size: 22),
+          Icon(Icons.check_circle, color: AppTheme.primaryColor, size: 20),
           SizedBox(width: 10),
           Expanded(
             child: Text(text,
-                style: GoogleFonts.poppins(fontSize: 16, color: Colors.white)),
+                style: GoogleFonts.poppins(fontSize: 15, color: Colors.white)),
           ),
         ],
       ),
@@ -283,7 +308,7 @@ class _PlanSelector extends StatelessWidget {
           selected: selected == 1,
           title: '3-day free trial',
           price: '\$9.99/week',
-          highlight: true,
+          highlight: false,
           onTap: () => onSelect(1),
         ),
       ],
@@ -309,42 +334,63 @@ class _PlanTile extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        decoration: BoxDecoration(
-          color: selected ? Colors.white : Colors.white10,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: selected ? AppTheme.primaryColor : Colors.white24,
-            width: selected ? 2.5 : 1.0,
+          decoration: BoxDecoration(
+            color: selected ? Colors.white : Colors.white10,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: selected ? AppTheme.primaryColor : Colors.white24,
+              width: selected ? 2.5 : 1.0,
+            ),
           ),
-        ),
-        padding: EdgeInsets.symmetric(vertical: 18, horizontal: 18),
-        child: Row(
-          children: [
-            if (selected)
-              Icon(Icons.check_circle, color: AppTheme.primaryColor),
-            SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          padding: EdgeInsets.only(bottom: 14, left: 14, right: 14),
+          child: Column(
+            children: [
+              highlight
+                  ? Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                          margin: EdgeInsets.symmetric(horizontal: 50),
+                          padding:
+                              EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                          child: Text('Save 88%',
+                              style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 10,
+                                  color: Colors.white)),
+                        )
+                      ],
+                    )
+                  : SizedBox(height: 14),
+              Row(
                 children: [
-                  Text(title,
-                      style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color:
-                              selected ? AppTheme.primaryColor : Colors.white)),
-                  Text(price,
-                      style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color:
-                              selected ? AppTheme.primaryColor : Colors.white)),
+                  if (selected)
+                    Icon(Icons.check_circle, color: AppTheme.primaryColor),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(title,
+                            style: GoogleFonts.poppins(
+                                fontSize: 14,
+                                color: selected ? Colors.black : Colors.white)),
+                        Text(price,
+                            style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: selected ? Colors.black : Colors.white)),
+                      ],
+                    ),
+                  ),
                 ],
               ),
-            ),
-          ],
-        ),
-      ),
+            ],
+          )),
     );
   }
 }
